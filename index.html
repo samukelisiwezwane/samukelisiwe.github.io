@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I Love you TCH</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Rolling header -->
+    <div class="ticker-wrap">
+      <div class="ticker-track" id="ticker">
+        <span>Hey my baby, pookie, sugar plum, honey bun Tanatswa</span>
+        <span>You are literally my favourite person shame</span>
+        <span>Your heart is such a blessing</span>
+        <span>I LOVE YOU SO SO SO MUCH</span>
+        <span>Big dawg! DC! (Just for balance)</span>
+        <span>Just happy to be here fr</span>
+        <span>I choose you 7 years a day</span>
+        <span>Till 3005</span>
+      </div>
+    </div>
+
+    <!-- Hamburger button + mobile overlay -->
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <div class="sidebar-brand">
+        <div class="label">A love letter</div>
+        <span class="name">For the boyzin</span>
+        <span class="heart">♥</span>
+      </div>
+      <a href="#" class="nav-item active" data-page="Home">
+        <span class="nav-text">Home</span>
+      </a>
+      <a href="#" class="nav-item" data-page="Letters">
+        <span class="nav-text">Letters for You</span>
+      </a>
+      <a href="#" class="nav-item" data-page="Faves">
+        <span class="nav-text">My Favourites</span>
+      </a>
+      <a href="#" class="nav-item" data-page="Dates">
+        <span class="nav-text">Important Dates</span>
+      </a>
+      <a href="#" class="nav-item" data-page="Superises">
+        <span class="nav-text">Surprises</span>
+      </a>
+      <div class="sidebar-footer">From Samukelisiwe Zwane</div>
+    </nav>
+
+    <!-- page links -->
+    <main class="main">
+      <div class="page active" id="page-Home"></div>
+      <div class="page" id="page-Letters"></div>
+      <div class="page" id="page-Faves"></div>
+      <div class="page" id="page-Dates"></div>
+      <div class="page" id="page-Superises"></div>
+    </main>
+
+    <script>
+      async function loadPage(name) {
+        const container = document.getElementById("page-" + name);
+        if (container && container.innerHTML.trim() === "") {
+          const response = await fetch(name + ".html");
+          container.innerHTML = await response.text();
+        }
+      }
+
+      function navigate(page) {
+        document
+          .querySelectorAll(".page")
+          .forEach((p) => p.classList.remove("active"));
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((n) => n.classList.remove("active"));
+
+        const target = document.getElementById("page-" + page);
+        if (target) target.classList.add("active");
+
+        const navItem = document.querySelector('[data-page="' + page + '"]');
+        if (navItem) navItem.classList.add("active");
+
+        loadPage(page);
+        window.scrollTo(0, 0);
+      }
+
+      function toggleSidebar() {
+        document.querySelector(".sidebar").classList.toggle("open");
+        document.getElementById("overlay").classList.toggle("visible");
+        document.body.classList.toggle("sidebar-open");
+      }
+
+      document.querySelectorAll(".nav-item").forEach((item) => {
+        item.addEventListener("click", function (e) {
+          e.preventDefault();
+          navigate(this.dataset.page);
+          // Close sidebar on mobile after navigating
+          document.querySelector(".sidebar").classList.remove("open");
+          document.getElementById("overlay").classList.remove("visible");
+        });
+      });
+
+      document.querySelectorAll("[data-page]").forEach((el) => {
+        if (!el.classList.contains("nav-item")) {
+          el.addEventListener("click", function (e) {
+            e.preventDefault();
+            navigate(this.dataset.page);
+          });
+        }
+      });
+
+      function revealFacts() {
+        const cards = document.querySelectorAll(".fact-card");
+        cards.forEach((card, i) => {
+          setTimeout(() => card.classList.add("revealed"), i * 150);
+        });
+        document.querySelector(".reveal-btn").style.display = "none";
+      }
+
+      // Load the home page on first visit
+      loadPage("Home");
+    </script>
+  </body>
+</html>
