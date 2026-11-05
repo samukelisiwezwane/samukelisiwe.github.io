@@ -890,12 +890,7 @@ button:focus-visible {
 .envelope-button.is-opening .envelope-seal {
   opacity: 0;
 }
-.envelope-hint {
-  margin-top: 1.6rem;
-  font-family: "Caveat", cursive;
-  font-size: 1.18rem;
-  color: var(--text-soft);
-}
+
 
 /* Popup letter uses your existing Playfair / letter-card design. */
 .letter-popup-overlay {
@@ -939,15 +934,15 @@ button:focus-visible {
 .close-envelope-letter {
   position: absolute;
   top: 8px;
-  right: 10px;
+  right: 8px;
   z-index: 10;
-  width: 37px;
-  height: 37px;
+  width: 30px;
+  height: 30px;
   border: none;
   border-radius: 50%;
   color: var(--text-dark);
   background: rgba(255, 255, 255, 0.96);
-  font: 1.6rem/1 sans-serif;
+  font: 12px sans-serif;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(61, 46, 39, 0.12);
 }
