@@ -119,6 +119,95 @@
         document.querySelector(".reveal-btn").style.display = "none";
       }
 
+      let envelopeOpeningTimer = null;
+      let envelopeLastFocus = null;
+
+      function openEnvelopeLetter() {
+        const popup = document.getElementById("november-letter-popup");
+        const button = document.querySelector(".envelope-button");
+        if (!popup || !button || popup.classList.contains("is-visible") || envelopeOpeningTimer) return;
+
+        envelopeLastFocus = button;
+        button.classList.add("is-opening");
+        const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        envelopeOpeningTimer = setTimeout(() => {
+          envelopeOpeningTimer = null;
+          popup.classList.add("is-visible");
+          popup.setAttribute("aria-hidden", "false");
+          document.body.classList.add("letter-modal-open");
+          popup.querySelector(".close-envelope-letter").focus();
+          if (!reducedMotion) launchEnvelopeConfetti();
+        }, reducedMotion ? 0 : 650);
+      }
+
+      function closeEnvelopeLetter() {
+        const popup = document.getElementById("november-letter-popup");
+        if (!popup) return;
+        if (envelopeOpeningTimer) {
+          clearTimeout(envelopeOpeningTimer);
+          envelopeOpeningTimer = null;
+        }
+        popup.classList.remove("is-visible");
+        popup.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("letter-modal-open");
+        document.querySelector(".envelope-button")?.classList.remove("is-opening");
+        envelopeLastFocus?.focus();
+      }
+
+      function launchEnvelopeConfetti() {
+        const layer = document.createElement("div");
+        layer.className = "envelope-confetti-layer";
+        layer.setAttribute("aria-hidden", "true");
+        document.body.appendChild(layer);
+        const colors = ["#e8b4b0", "#c8d9c4", "#c9a96e", "#f5d9d7", "#ffffff", "#8faa8b"];
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight * 0.4;
+        const distance = Math.max(window.innerWidth, window.innerHeight) * 0.52;
+
+        for (let i = 0; i < 115; i++) {
+          const piece = document.createElement("span");
+          piece.className = "envelope-confetti-piece";
+          piece.style.left = `${centerX}px`;
+          piece.style.top = `${centerY}px`;
+          piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          const angle = Math.random() * Math.PI * 2;
+          const radius = (0.23 + Math.random() * 0.77) * distance;
+          piece.style.setProperty("--dx", `${Math.cos(angle) * radius}px`);
+          piece.style.setProperty("--dy", `${Math.sin(angle) * radius + 180}px`);
+          piece.style.setProperty("--spin", `${(Math.random() - 0.5) * 1350}deg`);
+          piece.style.animationDelay = `${Math.random() * 0.18}s`;
+          piece.style.animationDuration = `${1.4 + Math.random() * 0.65}s`;
+          piece.style.width = `${6 + Math.random() * 7}px`;
+          piece.style.height = `${8 + Math.random() * 9}px`;
+          if (Math.random() > 0.72) piece.style.borderRadius = "50%";
+          layer.appendChild(piece);
+        }
+        setTimeout(() => layer.remove(), 2500);
+      }
+
+      document.addEventListener("click", function (event) {
+        if (event.target.closest(".envelope-button")) {
+          openEnvelopeLetter();
+        } else if (event.target.closest(".close-envelope-letter") ||
+                   event.target.classList.contains("letter-popup-overlay")) {
+          closeEnvelopeLetter();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        const popup = document.getElementById("november-letter-popup");
+        if (!popup || !popup.classList.contains("is-visible")) return;
+        if (event.key === "Escape") {
+          closeEnvelopeLetter();
+          return;
+        }
+        // The close button is the only focusable control inside the letter.
+        if (event.key === "Tab") {
+          event.preventDefault();
+          popup.querySelector(".close-envelope-letter").focus();
+        }
+      });
+
       // Load the home page on first visit
       loadPage("Home");
       // navigate("Dates");
